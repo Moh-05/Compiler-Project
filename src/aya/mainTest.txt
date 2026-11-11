@@ -1,0 +1,42 @@
+import org.antlr.v4.runtime.*;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            CharStream input = CharStreams.fromPath(Paths.get("src/aya/test.js"));
+
+            first lexer = new first(input);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            tokens.fill();
+
+            System.out.println("--- Tokens Found ---");
+
+            List<Token> errorTokens = new ArrayList<>();
+
+            for (Token token : tokens.getTokens()) {
+                if (token.getType() == Token.EOF) continue;
+
+                String typeName = first.VOCABULARY.getSymbolicName(token.getType());
+                if (typeName != null) {
+                    if (typeName.equals("LEXICAL_ERROR")) {
+                        errorTokens.add(token);
+                    } else {
+                        System.out.println("Text: [" + token.getText() + "] -> Type: " + typeName + " (" + token.getLine() + ":" + token.getCharPositionInLine() + ")");
+                    }
+                }
+            }
+
+            System.out.println();
+            System.out.println("--- Lexical Errors: " + errorTokens.size() + " ---");
+            for (Token err : errorTokens) {
+                System.out.println("Error at " + err.getLine() + ":" + err.getCharPositionInLine() + " Invalid/unexpected token: " + err.getText());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
