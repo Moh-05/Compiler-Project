@@ -2,14 +2,14 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "ANTLR: Generate",
+      "label": "ANTLR: Generate Lexer",
       "type": "shell",
-      "command": "java -jar lib/antlr-4.13.2-complete.jar src/JavaScript.g4 -o src",
+      "command": "java -jar lib/antlr-4.13.2-complete.jar src/JavaScriptLexer.g4 -o src",
       "group": "build",
       "problemMatcher": []
     },
     {
-      "label": "Run Compiler",
+      "label": "Run Lexer",
       "type": "shell",
       "command": "javac -cp \"lib/*\" src/*.java ; java -cp \"src;lib/*\" Main",
       "group": {
@@ -17,12 +17,6 @@
         "isDefault": true
       },
       "problemMatcher": ["$javac"]
-    },
-    {
-      "label": "Show Graphical Parse Tree (GUI)",
-      "type": "shell",
-      "command": "java -cp \"src;lib/*\" org.antlr.v4.gui.TestRig JavaScript program -gui input.txt",
-      "problemMatcher": []
     }
   ]
 }

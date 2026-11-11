@@ -1,5 +1,4 @@
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTree;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +6,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws Exception {
         String inputFile = args.length > 0 ? args[0] : "input.txt";
-        System.out.println("Reading: " + inputFile + "\n");
+        System.out.println("Analyzing: " + inputFile + "\n");
 
         CharStream stream = CharStreams.fromPath(Paths.get(inputFile));
         JavaScriptLexer lexer = new JavaScriptLexer(stream);
@@ -28,18 +27,19 @@ public class Main {
             int col = token.getCharPositionInLine();
             String text = token.getText();
 
-            // Collect lexical errors
+            // Track lexical errors
             if (isErrorToken(tokenName)) {
                 String errorMsg = getErrorMessage(tokenName, text);
                 errors.add("Error at " + line + ":" + col + " Invalid or unexpected token: " + errorMsg + " [" + escape(text) + "]");
                 continue;
             }
 
-            // Print valid token: Text: [lexeme] -> Type: TOKEN_TYPE (line:col)
+            // Standard Damascus University token output format:
+            // Text: [lexeme] -> Type: TOKEN_TYPE (line:column)
             System.out.println("Text: [" + escape(text) + "] -> Type: " + tokenName + " (" + line + ":" + col + ")");
         }
 
-        // Print lexical errors count and details
+        // Print Lexical Errors section
         System.out.println("\n--- Lexical Errors: " + errors.size() + " ---");
         if (errors.isEmpty()) {
             System.out.println("(No lexical errors found)");
@@ -48,17 +48,6 @@ public class Main {
                 System.out.println(err);
             }
         }
-
-        // Parse and print the parse tree
-        tokenStream.seek(0);
-        JavaScriptParser parser = new JavaScriptParser(tokenStream);
-        if (!errors.isEmpty()) {
-            parser.removeErrorListeners();
-        }
-
-        ParseTree tree = parser.program();
-        System.out.println("\n--- Parse Tree ---");
-        System.out.println(tree.toStringTree(parser));
     }
 
     private static boolean isErrorToken(String tokenName) {
