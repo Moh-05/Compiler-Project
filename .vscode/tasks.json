@@ -1,0 +1,28 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "ANTLR: Generate",
+      "type": "shell",
+      "command": "java -jar lib/antlr-4.13.2-complete.jar src/JavaScript.g4 -o src",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Compiler",
+      "type": "shell",
+      "command": "javac -cp \"lib/*\" src/*.java ; java -cp \"src;lib/*\" Main",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$javac"]
+    },
+    {
+      "label": "Show Graphical Parse Tree (GUI)",
+      "type": "shell",
+      "command": "java -cp \"src;lib/*\" org.antlr.v4.gui.TestRig JavaScript program -gui input.txt",
+      "problemMatcher": []
+    }
+  ]
+}

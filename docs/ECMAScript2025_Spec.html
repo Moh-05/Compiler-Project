@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECMAScript 2025 Lexical Specification | Damascus University</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #10b981;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --code-bg: #0b1120;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 100%);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 1px solid #3b82f640;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #3b82f640 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .badge-university {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid #3b82f660;
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .meta-item strong {
+            display: block;
+            color: #60a5fa;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item span {
+            font-size: 0.95rem;
+            color: #e2e8f0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            color: #38bdf8;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* Search & Filter */
+        .search-box {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            margin-bottom: 1.25rem;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+
+        th {
+            background: #0f172a;
+            color: #93c5fd;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: #e2e8f0;
+        }
+
+        tr:hover td {
+            background-color: rgba(59, 130, 246, 0.08);
+        }
+
+        .badge-cat {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .cat-reserved { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid #ef444440; }
+        .cat-strict { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b40; }
+        .cat-context { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f640; }
+        .cat-literal { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b98140; }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            background: var(--code-bg);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #38bdf8;
+            font-size: 0.88em;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            overflow-x: auto;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .spec-quote {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid var(--primary-light);
+            padding: 1rem 1.25rem;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 1rem;
+            font-style: italic;
+            color: #cbd5e1;
+        }
+
+        .arabic-box {
+            direction: rtl;
+            background: rgba(16, 185, 129, 0.08);
+            border-right: 4px solid var(--accent);
+            padding: 1.25rem;
+            border-radius: 8px 0 0 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: #d1fae5;
+        }
+
+        .arabic-box h3 {
+            color: #34d399;
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="badge-university">Damascus University | Faculty of Information Technology | AI Dept</div>
+            <h1>ECMAScript 2025 Lexical Specification Dossier</h1>
+            <div class="subtitle">Practical Compilers Project — Phase 1: Lexical Analysis (المحلل المفرداتي)</div>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <strong>Official Standard</strong>
+                    <span>ECMA-262 (16th Edition, 2025)</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Grammar Tool</strong>
+                    <span>ANTLR v4.13.2</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Target Language</strong>
+                    <span>ECMAScript 2025 (JavaScript)</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Checkpoint Milestone</strong>
+                    <span>Keywords & Identifiers Analysis</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Arabic Student Summary -->
+        <div class="arabic-box">
+            <h3>📌 تقرير إثبات دراسة مواصفة اللغة (ECMA-262 Documentation Research)</h3>
+            <p>
+                تم إعداد هذا التوثيق الرسمي استجابةً لمتطلبات <strong>الأسبوع الأول من مشروع المترجمات</strong> في جامعة دمشق.
+                قمنا بدراسة الفصل 12 من المواصفة القياسية الدولية <strong>ECMA-262 (ECMAScript 2025)</strong> المعنون بـ 
+                <em>"ECMAScript Language: Lexical Grammar"</em>، وتحديداً:
+            </p>
+            <ul>
+                <li><strong>القسم 12.7.2:</strong> حصر كافة الكلمات المحجوزة (Reserved Words) وكلمات النمط الصارم (Strict Mode).</li>
+                <li><strong>القسم 12.6:</strong> قواعد تشكيل المعرفات (Identifier Names) وتوافقها مع معيار Unicode.</li>
+                <li><strong>القسم 12.9:</strong> الثوابت المعاملة معاملة التوكنز المقيدة (null, true, false).</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Official Spec Citations -->
+        <div class="card">
+            <h2>📖 1. Official Standard Reference: ECMA-262 Section 12</h2>
+            <div class="spec-quote">
+                "ECMAScript code is expressed as a sequence of characters conforming to the rules for SourceCharacter. 
+                The lexical grammar defines how sequences of input characters are divided into a sequence of input elements 
+                consisting of tokens, line terminators, comments, and white space."
+                <br><br>
+                — <strong>ECMA-262 16th Edition (ECMAScript 2025), Section 12</strong>
+            </div>
+            <p>
+                In ANTLR4, the Lexer scans characters using Regular Expressions and emits <strong>Tokens</strong>. 
+                According to the specification, keywords take absolute precedence over identifiers when matched against identical character sequences.
+            </p>
+        </div>
+
+        <!-- Section 2: Reserved Keywords Table -->
+        <div class="card">
+            <h2>🔑 2. ECMAScript 2025 Reserved Keywords Table</h2>
+            <p>Type to instantly filter keywords by name or category:</p>
+            <input type="text" class="search-box" id="keywordSearch" placeholder="Filter keywords (e.g. 'const', 'async', 'strict', 'class')...">
+
+            <div style="overflow-x: auto;">
+                <table id="keywordsTable">
+                    <thead>
+                        <tr>
+                            <th>Keyword</th>
+                            <th>ANTLR4 Token</th>
+                            <th>Classification</th>
+                            <th>ECMA-262 Section</th>
+                            <th>Syntactic Role / Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Core Reserved Keywords -->
+                        <tr><td><code>await</code></td><td>AWAIT</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Pauses execution in async functions until promise resolves</td></tr>
+                        <tr><td><code>break</code></td><td>BREAK</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Terminates current loop, switch, or label</td></tr>
+                        <tr><td><code>case</code></td><td>CASE</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Marks clause in switch statement</td></tr>
+                        <tr><td><code>catch</code></td><td>CATCH</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Handles exceptions in try...catch statement</td></tr>
+                        <tr><td><code>class</code></td><td>CLASS</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Declares ECMAScript class declaration</td></tr>
+                        <tr><td><code>const</code></td><td>CONST</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Declares block-scoped immutable binding</td></tr>
+                        <tr><td><code>continue</code></td><td>CONTINUE</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Skips to next iteration of current loop</td></tr>
+                        <tr><td><code>debugger</code></td><td>DEBUGGER</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Invokes host debugger break functionality</td></tr>
+                        <tr><td><code>default</code></td><td>DEFAULT</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Default clause in switch or default export</td></tr>
+                        <tr><td><code>delete</code></td><td>DELETE</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Unary operator removing property from object</td></tr>
+                        <tr><td><code>do</code></td><td>DO</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Post-condition iteration loop</td></tr>
+                        <tr><td><code>else</code></td><td>ELSE</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Alternative branch in conditional statement</td></tr>
+                        <tr><td><code>export</code></td><td>EXPORT</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Exposes bindings from ES module</td></tr>
+                        <tr><td><code>extends</code></td><td>EXTENDS</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Establishes prototype inheritance in class</td></tr>
+                        <tr><td><code>finally</code></td><td>FINALLY</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Guaranteed execution block after try/catch</td></tr>
+                        <tr><td><code>for</code></td><td>FOR</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Looping construct (standard, for..of, for..in)</td></tr>
+                        <tr><td><code>function</code></td><td>FUNCTION</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Function declaration or expression</td></tr>
+                        <tr><td><code>if</code></td><td>IF</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Conditional statement</td></tr>
+                        <tr><td><code>import</code></td><td>IMPORT</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Loads external module bindings</td></tr>
+                        <tr><td><code>in</code></td><td>IN</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Relational operator for object property check</td></tr>
+                        <tr><td><code>instanceof</code></td><td>INSTANCEOF</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Relational prototype-chain type testing</td></tr>
+                        <tr><td><code>new</code></td><td>NEW</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Constructor invocation operator</td></tr>
+                        <tr><td><code>return</code></td><td>RETURN</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Exits function with optional evaluation value</td></tr>
+                        <tr><td><code>super</code></td><td>SUPER</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Refers to parent class prototype or constructor</td></tr>
+                        <tr><td><code>switch</code></td><td>SWITCH</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Multi-way branching statement</td></tr>
+                        <tr><td><code>this</code></td><td>THIS</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Current execution context reference</td></tr>
+                        <tr><td><code>throw</code></td><td>THROW</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Raises user exception</td></tr>
+                        <tr><td><code>try</code></td><td>TRY</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Guarded execution block for exception safety</td></tr>
+                        <tr><td><code>typeof</code></td><td>TYPEOF</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Unary operator returning string primitive type</td></tr>
+                        <tr><td><code>var</code></td><td>VAR</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Function-scoped variable declaration</td></tr>
+                        <tr><td><code>void</code></td><td>VOID</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Unary operator evaluating expression and returning undefined</td></tr>
+                        <tr><td><code>while</code></td><td>WHILE</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Pre-condition iteration loop</td></tr>
+                        <tr><td><code>with</code></td><td>WITH</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Extends scope chain (deprecated in strict mode)</td></tr>
+                        <tr><td><code>yield</code></td><td>YIELD</td><td><span class="badge-cat cat-reserved">Reserved</span></td><td>12.7.2</td><td>Pauses/resumes generator functions</td></tr>
+
+                        <!-- Strict Mode & Future Reserved -->
+                        <tr><td><code>let</code></td><td>LET</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Block-scoped reassignable variable declaration</td></tr>
+                        <tr><td><code>static</code></td><td>STATIC</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Defines static method or field on class constructor</td></tr>
+                        <tr><td><code>implements</code></td><td>IMPLEMENTS</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+                        <tr><td><code>interface</code></td><td>INTERFACE</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+                        <tr><td><code>package</code></td><td>PACKAGE</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+                        <tr><td><code>private</code></td><td>PRIVATE</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+                        <tr><td><code>protected</code></td><td>PROTECTED</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+                        <tr><td><code>public</code></td><td>PUBLIC</td><td><span class="badge-cat cat-strict">Strict / Future</span></td><td>12.7.2</td><td>Disallowed identifier in strict mode</td></tr>
+
+                        <!-- Contextual Keywords -->
+                        <tr><td><code>async</code></td><td>ASYNC</td><td><span class="badge-cat cat-context">Contextual</span></td><td>12.7.2</td><td>Prefix declaring asynchronous function or method</td></tr>
+
+                        <!-- Literal Tokens -->
+                        <tr><td><code>null</code></td><td>NULL_LITERAL</td><td><span class="badge-cat cat-literal">Literal</span></td><td>12.9</td><td>Null primitive value literal</td></tr>
+                        <tr><td><code>true</code></td><td>TRUE</td><td><span class="badge-cat cat-literal">Literal</span></td><td>12.9</td><td>Boolean truth literal</td></tr>
+                        <tr><td><code>false</code></td><td>FALSE</td><td><span class="badge-cat cat-literal">Literal</span></td><td>12.9</td><td>Boolean falsity literal</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section 3: Identifier Rules -->
+        <div class="card">
+            <h2>🏷️ 3. Identifier Specification: ECMA-262 Section 12.6</h2>
+            <p>
+                In ECMAScript, identifiers are names used for variables, functions, and properties. 
+                The formal specification rules state:
+            </p>
+
+            <pre>
+IdentifierName ::
+    IdentifierStart
+    IdentifierName IdentifierPart
+
+IdentifierStart ::
+    UnicodeIDStart
+    $
+    _
+
+IdentifierPart ::
+    UnicodeIDContinue
+    $
+    _
+            </pre>
+
+            <div class="spec-quote">
+                <strong>ANTLR4 Implementation Rule:</strong>
+                <pre>IDENTIFIER : [a-zA-Z_$] [a-zA-Z0-9_$]* ;</pre>
+                <em>Crucial note on rule ordering:</em> Keywords are defined <strong>above</strong> <code>IDENTIFIER</code> in the grammar file. 
+                Because ANTLR evaluates top-down, any exact match with a keyword produces that keyword's token (e.g. <code>CONST</code>), 
+                while compound names (e.g. <code>constantValue</code> or <code>$elem</code> or <code>_temp</code>) match <code>IDENTIFIER</code>.
+            </div>
+        </div>
+
+        <!-- Section 4: Live Verification Output -->
+        <div class="card">
+            <h2>✅ 4. Checkpoint Verification Output (Damascus University Format)</h2>
+            <p>
+                Executing <code>Main.java</code> against <code>input.js</code> produces the exact formatted token stream required by the department:
+            </p>
+            <pre>
+Text: [const] -> Type: CONST (4:0)
+Text: [userCount] -> Type: IDENTIFIER (4:6)
+Text: [=] -> Type: ASSIGN (4:16)
+Text: [42] -> Type: NUMBER (4:18)
+Text: [;] -> Type: SEMI (4:20)
+Text: [let] -> Type: LET (5:0)
+Text: [isValid] -> Type: IDENTIFIER (5:4)
+Text: [=] -> Type: ASSIGN (5:12)
+Text: [true] -> Type: TRUE (5:14)
+Text: [;] -> Type: SEMI (5:18)
+Text: [var] -> Type: VAR (6:0)
+Text: [emptyState] -> Type: IDENTIFIER (6:4)
+Text: [=] -> Type: ASSIGN (6:15)
+Text: [null] -> Type: NULL_LITERAL (6:17)
+Text: [;] -> Type: SEMI (6:21)
+Text: [let] -> Type: LET (7:0)
+Text: [$domElement] -> Type: IDENTIFIER (7:4)
+Text: [let] -> Type: LET (8:0)
+Text: [_privateCounter] -> Type: IDENTIFIER (8:4)
+Text: [async] -> Type: ASYNC (10:0)
+Text: [function] -> Type: FUNCTION (10:6)
+Text: [authenticateUser] -> Type: IDENTIFIER (10:15)
+Text: [await] -> Type: AWAIT (12:8)
+Text: [class] -> Type: CLASS (18:0)
+Text: [static] -> Type: STATIC (19:4)
+Text: [try] -> Type: TRY (20:8)
+Text: [catch] -> Type: CATCH (23:10)
+Text: [throw] -> Type: THROW (24:12)
+
+================================================================
+  Analysis Summary (ملخص التحليل):
+  Total Tokens:       83
+  Keywords Found:     23
+  Identifiers Found:  16
+================================================================
+            </pre>
+        </div>
+
+        <footer>
+            Damascus University • Faculty of Information Technology • AI Department 4th Year • Practical Compilers Project
+        </footer>
+    </div>
+
+    <script>
+        // Instant Live Filtering
+        const searchInput = document.getElementById('keywordSearch');
+        const table = document.getElementById('keywordsTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase();
+            for (let i = 0; i < rows.length; i++) {
+                const text = rows[i].textContent.toLowerCase();
+                rows[i].style.display = text.includes(query) ? '' : 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+

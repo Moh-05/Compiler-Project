@@ -1,0 +1,21 @@
+{
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar"
+  ],
+  "java.project.sourcePaths": [
+    "src"
+  ],
+  "files.exclude": {
+    "**/*.class": true,
+    "**/*.interp": true,
+    "**/*.tokens": true,
+    "**/.antlr": true,
+    "node_modules": true,
+    "package-lock.json": true,
+    "package.json": true,
+    "src/JavaScriptLexer.java": true,
+    "src/JavaScriptParser.java": true,
+    "src/JavaScriptBaseListener.java": true,
+    "src/JavaScriptListener.java": true
+  }
+}

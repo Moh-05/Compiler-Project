@@ -1,0 +1,15 @@
+# Compiled Java class files
+*.class
+
+# ANTLR interpreter & temp data
+*.interp
+*.tokens
+.antlr/
+
+# Node modules & npm artifacts
+node_modules/
+package-lock.json
+
+# OS specific files
+Thumbs.db
+.DS_Store
