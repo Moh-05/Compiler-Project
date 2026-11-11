@@ -125,6 +125,18 @@ public interface JavaScriptListener extends ParseTreeListener {
 	 */
 	void exitRelationalExpr(JavaScriptParser.RelationalExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code ExpExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpExpr(JavaScriptParser.ExpExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ExpExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpExpr(JavaScriptParser.ExpExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code UnaryExpr}
 	 * labeled alternative in {@link JavaScriptParser#expr}.
 	 * @param ctx the parse tree
@@ -221,6 +233,18 @@ public interface JavaScriptListener extends ParseTreeListener {
 	 */
 	void exitTemplateExpr(JavaScriptParser.TemplateExprContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code BitwiseExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterBitwiseExpr(JavaScriptParser.BitwiseExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code BitwiseExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitBitwiseExpr(JavaScriptParser.BitwiseExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code ParenExpr}
 	 * labeled alternative in {@link JavaScriptParser#expr}.
 	 * @param ctx the parse tree
@@ -244,6 +268,18 @@ public interface JavaScriptListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLogicalExpr(JavaScriptParser.LogicalExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ShiftExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterShiftExpr(JavaScriptParser.ShiftExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ShiftExpr}
+	 * labeled alternative in {@link JavaScriptParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitShiftExpr(JavaScriptParser.ShiftExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code AddSubExpr}
 	 * labeled alternative in {@link JavaScriptParser#expr}.

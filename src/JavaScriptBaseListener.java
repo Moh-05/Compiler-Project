@@ -148,6 +148,18 @@ public class JavaScriptBaseListener implements JavaScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterExpExpr(JavaScriptParser.ExpExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpExpr(JavaScriptParser.ExpExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterUnaryExpr(JavaScriptParser.UnaryExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -244,6 +256,18 @@ public class JavaScriptBaseListener implements JavaScriptListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBitwiseExpr(JavaScriptParser.BitwiseExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBitwiseExpr(JavaScriptParser.BitwiseExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterParenExpr(JavaScriptParser.ParenExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -263,6 +287,18 @@ public class JavaScriptBaseListener implements JavaScriptListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLogicalExpr(JavaScriptParser.LogicalExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterShiftExpr(JavaScriptParser.ShiftExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitShiftExpr(JavaScriptParser.ShiftExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

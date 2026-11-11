@@ -26,11 +26,14 @@ blockStmt: LBRACE statement* RBRACE;
 expr:
 	IDENTIFIER ASSIGN expr									# AssignExpr
 	| expr op = (AND | OR | NULLISH) expr					# LogicalExpr
+	| expr op = (BIT_AND | BIT_OR | BIT_XOR) expr			# BitwiseExpr
 	| expr op = (STRICT_EQ | STRICT_NEQ | EQ | NEQ) expr	# EqualityExpr
 	| expr op = (GTE | LTE | GT | LT) expr					# RelationalExpr
+	| expr op = (LSHIFT | RSHIFT | URSHIFT) expr			# ShiftExpr
 	| expr op = ('+' | '-') expr							# AddSubExpr
 	| expr op = ('*' | '/' | '%') expr						# MulDivExpr
-	| op = ('!' | '-' | '+') expr							# UnaryExpr
+	| expr op = EXP expr									# ExpExpr
+	| op = ('!' | '-' | '+' | BIT_NOT) expr					# UnaryExpr
 	| LPAREN expr RPAREN									# ParenExpr
 	| IDENTIFIER											# IdExpr
 	| number												# NumExpr
@@ -137,54 +140,87 @@ STRING:
 
 TEMPLATE_LITERAL: '`' ( '\\' . | ~[`\\])* '`';
 
-// ============================================================================ 6. Operators and
-// Punctuators ============================================================================
+// ============================================================================
+// 6. Operators and Punctuators
+// ============================================================================
 
-ARROW: '=>';
-STRICT_EQ: '===';
-STRICT_NEQ: '!==';
-EQ: '==';
-NEQ: '!=';
-GTE: '>=';
-LTE: '<=';
-GT: '>';
-LT: '<';
+ARROW       : '=>' ;
+STRICT_EQ   : '===' ;
+STRICT_NEQ  : '!==' ;
+EQ          : '==' ;
+NEQ         : '!=' ;
+GTE         : '>=' ;
+LTE         : '<=' ;
 
-NULLISH: '??';
-AND: '&&';
-OR: '||';
-NOT: '!';
+// Bitwise shift operators (ordered before GT / LT)
+URSHIFT     : '>>>' ;
+RSHIFT      : '>>' ;
+LSHIFT      : '<<' ;
 
-INCREMENT: '++';
-DECREMENT: '--';
-PLUS_ASSIGN: '+=';
-MINUS_ASSIGN: '-=';
-MULT_ASSIGN: '*=';
-DIV_ASSIGN: '/=';
-MOD_ASSIGN: '%=';
-ASSIGN: '=';
+GT          : '>' ;
+LT          : '<' ;
 
-PLUS: '+';
-MINUS: '-';
-MULT: '*';
-DIV: '/';
-MOD: '%';
+NULLISH     : '??' ;
+AND         : '&&' ;
+OR          : '||' ;
+NOT         : '!' ;
 
-SEMI: ';';
-COMMA: ',';
-DOT: '.';
-COLON: ':';
+INCREMENT   : '++' ;
+DECREMENT   : '--' ;
+EXP         : '**' ;
+PLUS_ASSIGN : '+=' ;
+MINUS_ASSIGN: '-=' ;
+MULT_ASSIGN : '*=' ;
+DIV_ASSIGN  : '/=' ;
+MOD_ASSIGN  : '%=' ;
+ASSIGN      : '=' ;
 
-LPAREN: '(';
-RPAREN: ')';
-LBRACE: '{';
-RBRACE: '}';
-LBRACK: '[';
-RBRACK: ']';
+PLUS        : '+' ;
+MINUS       : '-' ;
+MULT        : '*' ;
+DIV         : '/' ;
+MOD         : '%' ;
 
-// ============================================================================ 7. Comments &
-// Whitespace ============================================================================
+BIT_AND     : '&' ;
+BIT_OR      : '|' ;
+BIT_XOR     : '^' ;
+BIT_NOT     : '~' ;
+QUESTION    : '?' ;
+ELLIPSIS    : '...' ;
 
-LINE_COMMENT: '//' ~[\r\n]* -> skip;
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
-WS: [ \t\r\n]+ -> skip;
+SEMI        : ';' ;
+COMMA       : ',' ;
+DOT         : '.' ;
+COLON       : ':' ;
+
+LPAREN      : '(' ;
+RPAREN      : ')' ;
+LBRACE      : '{' ;
+RBRACE      : '}' ;
+LBRACK      : '[' ;
+RBRACK      : ']' ;
+
+// ============================================================================
+// 7. Comments & Whitespace
+// ============================================================================
+
+LINE_COMMENT  : '//' ~[\r\n]* -> skip ;
+BLOCK_COMMENT : '/*' .*? '*/' -> skip ;
+WS            : [ \t\r\n]+ -> skip ;
+
+// ============================================================================
+// 8. Lexical Error Catchers
+// ============================================================================
+
+UNCLOSED_STRING
+    : '"' ( ~["\\\r\n] | '\\' . )*
+    | '\'' ( ~['\\\r\n] | '\\' . )*
+    ;
+
+UNCLOSED_BLOCK_COMMENT
+    : '/*' .*? EOF
+    ;
+
+UNEXPECTED_CHAR
+    : .
+    ;

@@ -13,3 +13,8 @@ package-lock.json
 # OS specific files
 Thumbs.db
 .DS_Store
+
+# Reports & exports
+Phase1_Lexer_Report.html
+*.html
+

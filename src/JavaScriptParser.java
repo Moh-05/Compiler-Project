@@ -25,11 +25,14 @@ public class JavaScriptParser extends Parser {
 		NULL_LITERAL=45, TRUE=46, FALSE=47, IDENTIFIER=48, HEX_NUMBER=49, OCTAL_NUMBER=50, 
 		BINARY_NUMBER=51, FLOAT=52, INTEGER=53, STRING=54, TEMPLATE_LITERAL=55, 
 		ARROW=56, STRICT_EQ=57, STRICT_NEQ=58, EQ=59, NEQ=60, GTE=61, LTE=62, 
-		GT=63, LT=64, NULLISH=65, AND=66, OR=67, NOT=68, INCREMENT=69, DECREMENT=70, 
-		PLUS_ASSIGN=71, MINUS_ASSIGN=72, MULT_ASSIGN=73, DIV_ASSIGN=74, MOD_ASSIGN=75, 
-		ASSIGN=76, PLUS=77, MINUS=78, MULT=79, DIV=80, MOD=81, SEMI=82, COMMA=83, 
-		DOT=84, COLON=85, LPAREN=86, RPAREN=87, LBRACE=88, RBRACE=89, LBRACK=90, 
-		RBRACK=91, LINE_COMMENT=92, BLOCK_COMMENT=93, WS=94;
+		URSHIFT=63, RSHIFT=64, LSHIFT=65, GT=66, LT=67, NULLISH=68, AND=69, OR=70, 
+		NOT=71, INCREMENT=72, DECREMENT=73, EXP=74, PLUS_ASSIGN=75, MINUS_ASSIGN=76, 
+		MULT_ASSIGN=77, DIV_ASSIGN=78, MOD_ASSIGN=79, ASSIGN=80, PLUS=81, MINUS=82, 
+		MULT=83, DIV=84, MOD=85, BIT_AND=86, BIT_OR=87, BIT_XOR=88, BIT_NOT=89, 
+		QUESTION=90, ELLIPSIS=91, SEMI=92, COMMA=93, DOT=94, COLON=95, LPAREN=96, 
+		RPAREN=97, LBRACE=98, RBRACE=99, LBRACK=100, RBRACK=101, LINE_COMMENT=102, 
+		BLOCK_COMMENT=103, WS=104, UNCLOSED_STRING=105, UNCLOSED_BLOCK_COMMENT=106, 
+		UNEXPECTED_CHAR=107;
 	public static final int
 		RULE_program = 0, RULE_statement = 1, RULE_varDecl = 2, RULE_ifStmt = 3, 
 		RULE_returnStmt = 4, RULE_exprStmt = 5, RULE_blockStmt = 6, RULE_expr = 7, 
@@ -52,10 +55,11 @@ public class JavaScriptParser extends Parser {
 			"'while'", "'with'", "'yield'", "'let'", "'static'", "'implements'", 
 			"'interface'", "'package'", "'private'", "'protected'", "'public'", "'async'", 
 			"'null'", "'true'", "'false'", null, null, null, null, null, null, null, 
-			null, "'=>'", "'==='", "'!=='", "'=='", "'!='", "'>='", "'<='", "'>'", 
-			"'<'", "'??'", "'&&'", "'||'", "'!'", "'++'", "'--'", "'+='", "'-='", 
-			"'*='", "'/='", "'%='", "'='", "'+'", "'-'", "'*'", "'/'", "'%'", "';'", 
-			"','", "'.'", "':'", "'('", "')'", "'{'", "'}'", "'['", "']'"
+			null, "'=>'", "'==='", "'!=='", "'=='", "'!='", "'>='", "'<='", "'>>>'", 
+			"'>>'", "'<<'", "'>'", "'<'", "'??'", "'&&'", "'||'", "'!'", "'++'", 
+			"'--'", "'**'", "'+='", "'-='", "'*='", "'/='", "'%='", "'='", "'+'", 
+			"'-'", "'*'", "'/'", "'%'", "'&'", "'|'", "'^'", "'~'", "'?'", "'...'", 
+			"';'", "','", "'.'", "':'", "'('", "')'", "'{'", "'}'", "'['", "']'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -69,11 +73,13 @@ public class JavaScriptParser extends Parser {
 			"PRIVATE", "PROTECTED", "PUBLIC", "ASYNC", "NULL_LITERAL", "TRUE", "FALSE", 
 			"IDENTIFIER", "HEX_NUMBER", "OCTAL_NUMBER", "BINARY_NUMBER", "FLOAT", 
 			"INTEGER", "STRING", "TEMPLATE_LITERAL", "ARROW", "STRICT_EQ", "STRICT_NEQ", 
-			"EQ", "NEQ", "GTE", "LTE", "GT", "LT", "NULLISH", "AND", "OR", "NOT", 
-			"INCREMENT", "DECREMENT", "PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", 
-			"DIV_ASSIGN", "MOD_ASSIGN", "ASSIGN", "PLUS", "MINUS", "MULT", "DIV", 
-			"MOD", "SEMI", "COMMA", "DOT", "COLON", "LPAREN", "RPAREN", "LBRACE", 
-			"RBRACE", "LBRACK", "RBRACK", "LINE_COMMENT", "BLOCK_COMMENT", "WS"
+			"EQ", "NEQ", "GTE", "LTE", "URSHIFT", "RSHIFT", "LSHIFT", "GT", "LT", 
+			"NULLISH", "AND", "OR", "NOT", "INCREMENT", "DECREMENT", "EXP", "PLUS_ASSIGN", 
+			"MINUS_ASSIGN", "MULT_ASSIGN", "DIV_ASSIGN", "MOD_ASSIGN", "ASSIGN", 
+			"PLUS", "MINUS", "MULT", "DIV", "MOD", "BIT_AND", "BIT_OR", "BIT_XOR", 
+			"BIT_NOT", "QUESTION", "ELLIPSIS", "SEMI", "COMMA", "DOT", "COLON", "LPAREN", 
+			"RPAREN", "LBRACE", "RBRACE", "LBRACK", "RBRACK", "LINE_COMMENT", "BLOCK_COMMENT", 
+			"WS", "UNCLOSED_STRING", "UNCLOSED_BLOCK_COMMENT", "UNEXPECTED_CHAR"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -160,7 +166,7 @@ public class JavaScriptParser extends Parser {
 			setState(21);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 72022480549838912L) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 1312257L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 72022480549838912L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 168037377L) != 0)) {
 				{
 				{
 				setState(18);
@@ -261,6 +267,7 @@ public class JavaScriptParser extends Parser {
 			case NOT:
 			case PLUS:
 			case MINUS:
+			case BIT_NOT:
 			case LPAREN:
 				enterOuterAlt(_localctx, 4);
 				{
@@ -464,7 +471,7 @@ public class JavaScriptParser extends Parser {
 			setState(52);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if (((((_la - 45)) & ~0x3f) == 0 && ((1L << (_la - 45)) & 2211916548095L) != 0)) {
+			if (((((_la - 45)) & ~0x3f) == 0 && ((1L << (_la - 45)) & 2269598225270783L) != 0)) {
 				{
 				setState(51);
 				expr(0);
@@ -565,7 +572,7 @@ public class JavaScriptParser extends Parser {
 			setState(63);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 72022480549838912L) != 0) || ((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 1312257L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 72022480549838912L) != 0) || ((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 168037377L) != 0)) {
 				{
 				{
 				setState(60);
@@ -666,6 +673,26 @@ public class JavaScriptParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class ExpExprContext extends ExprContext {
+		public Token op;
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode EXP() { return getToken(JavaScriptParser.EXP, 0); }
+		public ExpExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).enterExpExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).exitExpExpr(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class UnaryExprContext extends ExprContext {
 		public Token op;
 		public ExprContext expr() {
@@ -674,6 +701,7 @@ public class JavaScriptParser extends Parser {
 		public TerminalNode NOT() { return getToken(JavaScriptParser.NOT, 0); }
 		public TerminalNode MINUS() { return getToken(JavaScriptParser.MINUS, 0); }
 		public TerminalNode PLUS() { return getToken(JavaScriptParser.PLUS, 0); }
+		public TerminalNode BIT_NOT() { return getToken(JavaScriptParser.BIT_NOT, 0); }
 		public UnaryExprContext(ExprContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -801,6 +829,28 @@ public class JavaScriptParser extends Parser {
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
+	public static class BitwiseExprContext extends ExprContext {
+		public Token op;
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode BIT_AND() { return getToken(JavaScriptParser.BIT_AND, 0); }
+		public TerminalNode BIT_OR() { return getToken(JavaScriptParser.BIT_OR, 0); }
+		public TerminalNode BIT_XOR() { return getToken(JavaScriptParser.BIT_XOR, 0); }
+		public BitwiseExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).enterBitwiseExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).exitBitwiseExpr(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
 	public static class ParenExprContext extends ExprContext {
 		public TerminalNode LPAREN() { return getToken(JavaScriptParser.LPAREN, 0); }
 		public ExprContext expr() {
@@ -837,6 +887,28 @@ public class JavaScriptParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).exitLogicalExpr(this);
+		}
+	}
+	@SuppressWarnings("CheckReturnValue")
+	public static class ShiftExprContext extends ExprContext {
+		public Token op;
+		public List<ExprContext> expr() {
+			return getRuleContexts(ExprContext.class);
+		}
+		public ExprContext expr(int i) {
+			return getRuleContext(ExprContext.class,i);
+		}
+		public TerminalNode LSHIFT() { return getToken(JavaScriptParser.LSHIFT, 0); }
+		public TerminalNode RSHIFT() { return getToken(JavaScriptParser.RSHIFT, 0); }
+		public TerminalNode URSHIFT() { return getToken(JavaScriptParser.URSHIFT, 0); }
+		public ShiftExprContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).enterShiftExpr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof JavaScriptListener ) ((JavaScriptListener)listener).exitShiftExpr(this);
 		}
 	}
 	@SuppressWarnings("CheckReturnValue")
@@ -891,7 +963,7 @@ public class JavaScriptParser extends Parser {
 				setState(70);
 				match(ASSIGN);
 				setState(71);
-				expr(15);
+				expr(18);
 				}
 				break;
 			case 2:
@@ -902,7 +974,7 @@ public class JavaScriptParser extends Parser {
 				setState(72);
 				((UnaryExprContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 1537L) != 0)) ) {
+				if ( !(((((_la - 71)) & ~0x3f) == 0 && ((1L << (_la - 71)) & 265217L) != 0)) ) {
 					((UnaryExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				else {
@@ -992,7 +1064,7 @@ public class JavaScriptParser extends Parser {
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(104);
+			setState(113);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
@@ -1000,7 +1072,7 @@ public class JavaScriptParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(102);
+					setState(111);
 					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,7,_ctx) ) {
 					case 1:
@@ -1008,11 +1080,11 @@ public class JavaScriptParser extends Parser {
 						_localctx = new LogicalExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(87);
-						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
+						if (!(precpred(_ctx, 17))) throw new FailedPredicateException(this, "precpred(_ctx, 17)");
 						setState(88);
 						((LogicalExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(((((_la - 65)) & ~0x3f) == 0 && ((1L << (_la - 65)) & 7L) != 0)) ) {
+						if ( !(((((_la - 68)) & ~0x3f) == 0 && ((1L << (_la - 68)) & 7L) != 0)) ) {
 							((LogicalExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1021,16 +1093,37 @@ public class JavaScriptParser extends Parser {
 							consume();
 						}
 						setState(89);
-						expr(15);
+						expr(18);
 						}
 						break;
 					case 2:
 						{
-						_localctx = new EqualityExprContext(new ExprContext(_parentctx, _parentState));
+						_localctx = new BitwiseExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
 						setState(90);
-						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
+						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
 						setState(91);
+						((BitwiseExprContext)_localctx).op = _input.LT(1);
+						_la = _input.LA(1);
+						if ( !(((((_la - 86)) & ~0x3f) == 0 && ((1L << (_la - 86)) & 7L) != 0)) ) {
+							((BitwiseExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
+						setState(92);
+						expr(17);
+						}
+						break;
+					case 3:
+						{
+						_localctx = new EqualityExprContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(93);
+						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
+						setState(94);
 						((EqualityExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2161727821137838080L) != 0)) ) {
@@ -1041,20 +1134,20 @@ public class JavaScriptParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(92);
-						expr(14);
+						setState(95);
+						expr(16);
 						}
 						break;
-					case 3:
+					case 4:
 						{
 						_localctx = new RelationalExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(93);
-						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(94);
+						setState(96);
+						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
+						setState(97);
 						((RelationalExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(((((_la - 61)) & ~0x3f) == 0 && ((1L << (_la - 61)) & 15L) != 0)) ) {
+						if ( !(((((_la - 61)) & ~0x3f) == 0 && ((1L << (_la - 61)) & 99L) != 0)) ) {
 							((RelationalExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1062,17 +1155,38 @@ public class JavaScriptParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(95);
-						expr(13);
+						setState(98);
+						expr(15);
 						}
 						break;
-					case 4:
+					case 5:
+						{
+						_localctx = new ShiftExprContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(99);
+						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
+						setState(100);
+						((ShiftExprContext)_localctx).op = _input.LT(1);
+						_la = _input.LA(1);
+						if ( !(((((_la - 63)) & ~0x3f) == 0 && ((1L << (_la - 63)) & 7L) != 0)) ) {
+							((ShiftExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
+						setState(101);
+						expr(14);
+						}
+						break;
+					case 6:
 						{
 						_localctx = new AddSubExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(96);
-						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(97);
+						setState(102);
+						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
+						setState(103);
 						((AddSubExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
 						if ( !(_la==PLUS || _la==MINUS) ) {
@@ -1083,20 +1197,20 @@ public class JavaScriptParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(98);
-						expr(12);
+						setState(104);
+						expr(13);
 						}
 						break;
-					case 5:
+					case 7:
 						{
 						_localctx = new MulDivExprContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(99);
-						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
-						setState(100);
+						setState(105);
+						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
+						setState(106);
 						((MulDivExprContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(((((_la - 79)) & ~0x3f) == 0 && ((1L << (_la - 79)) & 7L) != 0)) ) {
+						if ( !(((((_la - 83)) & ~0x3f) == 0 && ((1L << (_la - 83)) & 7L) != 0)) ) {
 							((MulDivExprContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						else {
@@ -1104,14 +1218,26 @@ public class JavaScriptParser extends Parser {
 							_errHandler.reportMatch(this);
 							consume();
 						}
-						setState(101);
+						setState(107);
+						expr(12);
+						}
+						break;
+					case 8:
+						{
+						_localctx = new ExpExprContext(new ExprContext(_parentctx, _parentState));
+						pushNewRecursionContext(_localctx, _startState, RULE_expr);
+						setState(108);
+						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
+						setState(109);
+						((ExpExprContext)_localctx).op = match(EXP);
+						setState(110);
 						expr(11);
 						}
 						break;
 					}
 					} 
 				}
-				setState(106);
+				setState(115);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
 			}
@@ -1156,7 +1282,7 @@ public class JavaScriptParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(107);
+			setState(116);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 17451448556060672L) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -1189,21 +1315,27 @@ public class JavaScriptParser extends Parser {
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return precpred(_ctx, 14);
+			return precpred(_ctx, 17);
 		case 1:
-			return precpred(_ctx, 13);
+			return precpred(_ctx, 16);
 		case 2:
-			return precpred(_ctx, 12);
+			return precpred(_ctx, 15);
 		case 3:
-			return precpred(_ctx, 11);
+			return precpred(_ctx, 14);
 		case 4:
+			return precpred(_ctx, 13);
+		case 5:
+			return precpred(_ctx, 12);
+		case 6:
+			return precpred(_ctx, 11);
+		case 7:
 			return precpred(_ctx, 10);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001^n\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002\u0002"+
+		"\u0004\u0001kw\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002\u0002"+
 		"\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002\u0005"+
 		"\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002\b\u0007"+
 		"\b\u0001\u0000\u0005\u0000\u0014\b\u0000\n\u0000\f\u0000\u0017\t\u0000"+
@@ -1219,57 +1351,63 @@ public class JavaScriptParser extends Parser {
 		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0003"+
 		"\u0007V\b\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001"+
 		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001"+
-		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0005\u0007g\b"+
-		"\u0007\n\u0007\f\u0007j\t\u0007\u0001\b\u0001\b\u0001\b\u0000\u0001\u000e"+
-		"\t\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0000\b\u0003\u0000\u0006"+
-		"\u0006\u001f\u001f$$\u0002\u0000DDMN\u0001\u0000AC\u0001\u00009<\u0001"+
-		"\u0000=@\u0001\u0000MN\u0001\u0000OQ\u0001\u000015{\u0000\u0015\u0001"+
-		"\u0000\u0000\u0000\u0002\u001f\u0001\u0000\u0000\u0000\u0004!\u0001\u0000"+
-		"\u0000\u0000\u0006)\u0001\u0000\u0000\u0000\b2\u0001\u0000\u0000\u0000"+
-		"\n8\u0001\u0000\u0000\u0000\f;\u0001\u0000\u0000\u0000\u000eU\u0001\u0000"+
-		"\u0000\u0000\u0010k\u0001\u0000\u0000\u0000\u0012\u0014\u0003\u0002\u0001"+
-		"\u0000\u0013\u0012\u0001\u0000\u0000\u0000\u0014\u0017\u0001\u0000\u0000"+
-		"\u0000\u0015\u0013\u0001\u0000\u0000\u0000\u0015\u0016\u0001\u0000\u0000"+
-		"\u0000\u0016\u0018\u0001\u0000\u0000\u0000\u0017\u0015\u0001\u0000\u0000"+
-		"\u0000\u0018\u0019\u0005\u0000\u0000\u0001\u0019\u0001\u0001\u0000\u0000"+
-		"\u0000\u001a \u0003\u0004\u0002\u0000\u001b \u0003\u0006\u0003\u0000\u001c"+
-		" \u0003\b\u0004\u0000\u001d \u0003\n\u0005\u0000\u001e \u0003\f\u0006"+
-		"\u0000\u001f\u001a\u0001\u0000\u0000\u0000\u001f\u001b\u0001\u0000\u0000"+
-		"\u0000\u001f\u001c\u0001\u0000\u0000\u0000\u001f\u001d\u0001\u0000\u0000"+
-		"\u0000\u001f\u001e\u0001\u0000\u0000\u0000 \u0003\u0001\u0000\u0000\u0000"+
-		"!\"\u0007\u0000\u0000\u0000\"%\u00050\u0000\u0000#$\u0005L\u0000\u0000"+
-		"$&\u0003\u000e\u0007\u0000%#\u0001\u0000\u0000\u0000%&\u0001\u0000\u0000"+
-		"\u0000&\'\u0001\u0000\u0000\u0000\'(\u0005R\u0000\u0000(\u0005\u0001\u0000"+
-		"\u0000\u0000)*\u0005\u0012\u0000\u0000*+\u0005V\u0000\u0000+,\u0003\u000e"+
-		"\u0007\u0000,-\u0005W\u0000\u0000-0\u0003\u0002\u0001\u0000./\u0005\f"+
-		"\u0000\u0000/1\u0003\u0002\u0001\u00000.\u0001\u0000\u0000\u000001\u0001"+
+		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001"+
+		"\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001"+
+		"\u0007\u0001\u0007\u0005\u0007p\b\u0007\n\u0007\f\u0007s\t\u0007\u0001"+
+		"\b\u0001\b\u0001\b\u0000\u0001\u000e\t\u0000\u0002\u0004\u0006\b\n\f\u000e"+
+		"\u0010\u0000\n\u0003\u0000\u0006\u0006\u001f\u001f$$\u0003\u0000GGQRY"+
+		"Y\u0001\u0000DF\u0001\u0000VX\u0001\u00009<\u0002\u0000=>BC\u0001\u0000"+
+		"?A\u0001\u0000QR\u0001\u0000SU\u0001\u000015\u0087\u0000\u0015\u0001\u0000"+
+		"\u0000\u0000\u0002\u001f\u0001\u0000\u0000\u0000\u0004!\u0001\u0000\u0000"+
+		"\u0000\u0006)\u0001\u0000\u0000\u0000\b2\u0001\u0000\u0000\u0000\n8\u0001"+
+		"\u0000\u0000\u0000\f;\u0001\u0000\u0000\u0000\u000eU\u0001\u0000\u0000"+
+		"\u0000\u0010t\u0001\u0000\u0000\u0000\u0012\u0014\u0003\u0002\u0001\u0000"+
+		"\u0013\u0012\u0001\u0000\u0000\u0000\u0014\u0017\u0001\u0000\u0000\u0000"+
+		"\u0015\u0013\u0001\u0000\u0000\u0000\u0015\u0016\u0001\u0000\u0000\u0000"+
+		"\u0016\u0018\u0001\u0000\u0000\u0000\u0017\u0015\u0001\u0000\u0000\u0000"+
+		"\u0018\u0019\u0005\u0000\u0000\u0001\u0019\u0001\u0001\u0000\u0000\u0000"+
+		"\u001a \u0003\u0004\u0002\u0000\u001b \u0003\u0006\u0003\u0000\u001c "+
+		"\u0003\b\u0004\u0000\u001d \u0003\n\u0005\u0000\u001e \u0003\f\u0006\u0000"+
+		"\u001f\u001a\u0001\u0000\u0000\u0000\u001f\u001b\u0001\u0000\u0000\u0000"+
+		"\u001f\u001c\u0001\u0000\u0000\u0000\u001f\u001d\u0001\u0000\u0000\u0000"+
+		"\u001f\u001e\u0001\u0000\u0000\u0000 \u0003\u0001\u0000\u0000\u0000!\""+
+		"\u0007\u0000\u0000\u0000\"%\u00050\u0000\u0000#$\u0005P\u0000\u0000$&"+
+		"\u0003\u000e\u0007\u0000%#\u0001\u0000\u0000\u0000%&\u0001\u0000\u0000"+
+		"\u0000&\'\u0001\u0000\u0000\u0000\'(\u0005\\\u0000\u0000(\u0005\u0001"+
+		"\u0000\u0000\u0000)*\u0005\u0012\u0000\u0000*+\u0005`\u0000\u0000+,\u0003"+
+		"\u000e\u0007\u0000,-\u0005a\u0000\u0000-0\u0003\u0002\u0001\u0000./\u0005"+
+		"\f\u0000\u0000/1\u0003\u0002\u0001\u00000.\u0001\u0000\u0000\u000001\u0001"+
 		"\u0000\u0000\u00001\u0007\u0001\u0000\u0000\u000024\u0005\u0018\u0000"+
 		"\u000035\u0003\u000e\u0007\u000043\u0001\u0000\u0000\u000045\u0001\u0000"+
-		"\u0000\u000056\u0001\u0000\u0000\u000067\u0005R\u0000\u00007\t\u0001\u0000"+
-		"\u0000\u000089\u0003\u000e\u0007\u00009:\u0005R\u0000\u0000:\u000b\u0001"+
-		"\u0000\u0000\u0000;?\u0005X\u0000\u0000<>\u0003\u0002\u0001\u0000=<\u0001"+
-		"\u0000\u0000\u0000>A\u0001\u0000\u0000\u0000?=\u0001\u0000\u0000\u0000"+
-		"?@\u0001\u0000\u0000\u0000@B\u0001\u0000\u0000\u0000A?\u0001\u0000\u0000"+
-		"\u0000BC\u0005Y\u0000\u0000C\r\u0001\u0000\u0000\u0000DE\u0006\u0007\uffff"+
-		"\uffff\u0000EF\u00050\u0000\u0000FG\u0005L\u0000\u0000GV\u0003\u000e\u0007"+
-		"\u000fHI\u0007\u0001\u0000\u0000IV\u0003\u000e\u0007\tJK\u0005V\u0000"+
-		"\u0000KL\u0003\u000e\u0007\u0000LM\u0005W\u0000\u0000MV\u0001\u0000\u0000"+
-		"\u0000NV\u00050\u0000\u0000OV\u0003\u0010\b\u0000PV\u00056\u0000\u0000"+
-		"QV\u00057\u0000\u0000RV\u0005.\u0000\u0000SV\u0005/\u0000\u0000TV\u0005"+
-		"-\u0000\u0000UD\u0001\u0000\u0000\u0000UH\u0001\u0000\u0000\u0000UJ\u0001"+
-		"\u0000\u0000\u0000UN\u0001\u0000\u0000\u0000UO\u0001\u0000\u0000\u0000"+
-		"UP\u0001\u0000\u0000\u0000UQ\u0001\u0000\u0000\u0000UR\u0001\u0000\u0000"+
-		"\u0000US\u0001\u0000\u0000\u0000UT\u0001\u0000\u0000\u0000Vh\u0001\u0000"+
-		"\u0000\u0000WX\n\u000e\u0000\u0000XY\u0007\u0002\u0000\u0000Yg\u0003\u000e"+
-		"\u0007\u000fZ[\n\r\u0000\u0000[\\\u0007\u0003\u0000\u0000\\g\u0003\u000e"+
-		"\u0007\u000e]^\n\f\u0000\u0000^_\u0007\u0004\u0000\u0000_g\u0003\u000e"+
-		"\u0007\r`a\n\u000b\u0000\u0000ab\u0007\u0005\u0000\u0000bg\u0003\u000e"+
-		"\u0007\fcd\n\n\u0000\u0000de\u0007\u0006\u0000\u0000eg\u0003\u000e\u0007"+
-		"\u000bfW\u0001\u0000\u0000\u0000fZ\u0001\u0000\u0000\u0000f]\u0001\u0000"+
-		"\u0000\u0000f`\u0001\u0000\u0000\u0000fc\u0001\u0000\u0000\u0000gj\u0001"+
-		"\u0000\u0000\u0000hf\u0001\u0000\u0000\u0000hi\u0001\u0000\u0000\u0000"+
-		"i\u000f\u0001\u0000\u0000\u0000jh\u0001\u0000\u0000\u0000kl\u0007\u0007"+
-		"\u0000\u0000l\u0011\u0001\u0000\u0000\u0000\t\u0015\u001f%04?Ufh";
+		"\u0000\u000056\u0001\u0000\u0000\u000067\u0005\\\u0000\u00007\t\u0001"+
+		"\u0000\u0000\u000089\u0003\u000e\u0007\u00009:\u0005\\\u0000\u0000:\u000b"+
+		"\u0001\u0000\u0000\u0000;?\u0005b\u0000\u0000<>\u0003\u0002\u0001\u0000"+
+		"=<\u0001\u0000\u0000\u0000>A\u0001\u0000\u0000\u0000?=\u0001\u0000\u0000"+
+		"\u0000?@\u0001\u0000\u0000\u0000@B\u0001\u0000\u0000\u0000A?\u0001\u0000"+
+		"\u0000\u0000BC\u0005c\u0000\u0000C\r\u0001\u0000\u0000\u0000DE\u0006\u0007"+
+		"\uffff\uffff\u0000EF\u00050\u0000\u0000FG\u0005P\u0000\u0000GV\u0003\u000e"+
+		"\u0007\u0012HI\u0007\u0001\u0000\u0000IV\u0003\u000e\u0007\tJK\u0005`"+
+		"\u0000\u0000KL\u0003\u000e\u0007\u0000LM\u0005a\u0000\u0000MV\u0001\u0000"+
+		"\u0000\u0000NV\u00050\u0000\u0000OV\u0003\u0010\b\u0000PV\u00056\u0000"+
+		"\u0000QV\u00057\u0000\u0000RV\u0005.\u0000\u0000SV\u0005/\u0000\u0000"+
+		"TV\u0005-\u0000\u0000UD\u0001\u0000\u0000\u0000UH\u0001\u0000\u0000\u0000"+
+		"UJ\u0001\u0000\u0000\u0000UN\u0001\u0000\u0000\u0000UO\u0001\u0000\u0000"+
+		"\u0000UP\u0001\u0000\u0000\u0000UQ\u0001\u0000\u0000\u0000UR\u0001\u0000"+
+		"\u0000\u0000US\u0001\u0000\u0000\u0000UT\u0001\u0000\u0000\u0000Vq\u0001"+
+		"\u0000\u0000\u0000WX\n\u0011\u0000\u0000XY\u0007\u0002\u0000\u0000Yp\u0003"+
+		"\u000e\u0007\u0012Z[\n\u0010\u0000\u0000[\\\u0007\u0003\u0000\u0000\\"+
+		"p\u0003\u000e\u0007\u0011]^\n\u000f\u0000\u0000^_\u0007\u0004\u0000\u0000"+
+		"_p\u0003\u000e\u0007\u0010`a\n\u000e\u0000\u0000ab\u0007\u0005\u0000\u0000"+
+		"bp\u0003\u000e\u0007\u000fcd\n\r\u0000\u0000de\u0007\u0006\u0000\u0000"+
+		"ep\u0003\u000e\u0007\u000efg\n\f\u0000\u0000gh\u0007\u0007\u0000\u0000"+
+		"hp\u0003\u000e\u0007\rij\n\u000b\u0000\u0000jk\u0007\b\u0000\u0000kp\u0003"+
+		"\u000e\u0007\flm\n\n\u0000\u0000mn\u0005J\u0000\u0000np\u0003\u000e\u0007"+
+		"\u000boW\u0001\u0000\u0000\u0000oZ\u0001\u0000\u0000\u0000o]\u0001\u0000"+
+		"\u0000\u0000o`\u0001\u0000\u0000\u0000oc\u0001\u0000\u0000\u0000of\u0001"+
+		"\u0000\u0000\u0000oi\u0001\u0000\u0000\u0000ol\u0001\u0000\u0000\u0000"+
+		"ps\u0001\u0000\u0000\u0000qo\u0001\u0000\u0000\u0000qr\u0001\u0000\u0000"+
+		"\u0000r\u000f\u0001\u0000\u0000\u0000sq\u0001\u0000\u0000\u0000tu\u0007"+
+		"\t\u0000\u0000u\u0011\u0001\u0000\u0000\u0000\t\u0015\u001f%04?Uoq";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
